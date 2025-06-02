@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生肖号码统计器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, #4CAF50, #2196F3);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .input-section {
+            padding: 25px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .input-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+        
+        #input {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+        
+        #input:focus {
+            border-color: #2196F3;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        #clearBtn {
+            background: linear-gradient(to right, #ff4444, #cc0000);
+            color: white;
+        }
+        
+        #numberBtn {
+            background: linear-gradient(to right, #4CAF50, #2E7D32);
+            color: white;
+        }
+        
+        #zodiacBtn {
+            background: linear-gradient(to right, #2196F3, #0D47A1);
+            color: white;
+        }
+        
+        .instructions {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #2196F3;
+        }
+        
+        .instructions h3 {
+            color: #0D47A1;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 25px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .instructions .example {
+            background: #bbdefb;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: monospace;
+        }
+        
+        .result-section {
+            padding: 0 25px 25px;
+        }
+        
+        .result-section h2 {
+            text-align: center;
+            margin: 20px 0;
+            color: #2c3e50;
+            font-size: 1.8rem;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4CAF50;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        th {
+            background: linear-gradient(to right, #4CAF50, #2196F3);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f5f5f5;
+        }
+        
+        tr:hover {
+            background-color: #e3f2fd;
+        }
+        
+        .count-cell { 
+            width: 15%; 
+            font-weight: bold;
+            color: #0D47A1;
+        }
+        
+        .numbers-cell { 
+            width: 65%; 
+        }
+        
+        .total-cell { 
+            width: 20%; 
+            font-weight: bold;
+            color: #2E7D32;
+        }
+        
+        .zodiac-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .zodiac-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .zodiac-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .zodiac-item h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .zodiac-numbers {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #2c3e50;
+            color: white;
+            margin-top: 20px;
+        }
+        
+        footer p {
+            margin: 5px 0;
+        }
+        
+        .mode-indicator {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .number-mode {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .zodiac-mode {
+            background: #2196F3;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            button {
+                width: 90%;
+                margin-bottom: 10px;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .zodiac-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            header {
+                padding: 15px;
+            }
+            
+            header h1 {
+                font-size: 1.7rem;
+            }
+            
+            .input-section, .result-section {
+                padding: 15px;
+            }
+            
+            #input {
+                height: 100px;
+            }
+            
+            th, td {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-dragon"></i> 生肖号码统计器 <i class="fas fa-chart-bar"></i></h1>
+            <p>输入文本内容，自动识别并统计生肖或号码的出现频率</p>
+        </header>
+        
+        <div class="input-section">
+            <label for="input"><i class="fas fa-pencil-alt"></i> 请输入文本内容（可包含生肖名称或数字）：</label>
+            <textarea id="input" placeholder="例如：鼠、牛、虎、兔、龙、蛇、马、羊、猴、鸡、狗、猪... 或 1, 2, 3, ... 49"></textarea>
+            
+            <div class="button-group">
+                <button id="zodiacBtn">
+                    <i class="fas fa-paw"></i> 统计生肖
+                </button>
+                <button id="numberBtn">
+                    <i class="fas fa-hashtag"></i> 统计号码
+                </button>
+                <button id="clearBtn">
+                    <i class="fas fa-trash-alt"></i> 清除数据
+                </button>
+            </div>
+            
+            <div class="instructions">
+                <h3><i class="fas fa-info-circle"></i> 使用说明</h3>
+                <ul>
+                    <li>在文本框中输入包含生肖名称（如鼠、牛、虎等）或数字（1-49）的内容</li>
+                    <li>点击"统计生肖"按钮：统计各生肖出现的次数</li>
+                    <li>点击"统计号码"按钮：统计各号码（1-49）出现的次数</li>
+                    <li>点击"清除数据"按钮：清空输入框和统计结果</li>
+                </ul>
+                <div class="example">
+                    <strong>示例输入：</strong> 鼠鼠牛虎兔 12 18 30 42 龙蛇马羊猴鸡狗猪 1 2 3 4 5
+                </div>
+            </div>
+        </div>
+        
+        <div class="result-section">
+            <h2>统计结果 <span id="modeIndicator" class="mode-indicator number-mode">号码模式</span></h2>
+            <div id="result"></div>
+        </div>
+        
+        <div class="zodiac-reference">
+            <h2 style="text-align: center; margin: 20px 0; color: #2c3e50; padding-bottom: 10px; border-bottom: 2px solid #4CAF50;">
+                <i class="fas fa-book"></i> 生肖号码对照表
+            </h2>
+            <div class="zodiac-grid" id="zodiacReference"></div>
+        </div>
+        
+        <footer>
+            <p><i class="fas fa-globe"></i> 生肖号码统计器 - GitHub Pages版</p>
+            <p>输入网址即可使用，无需安装，永久免费</p>
+        </footer>
+    </div>
+
+    <script>
+        // 生肖-号码映射表
+        const zodiacMap = {
+            '鼠': [6,18,30,42],
+            '牛': [5,17,29,41],
+            '虎': [4,16,28,40],
+            '兔': [3,15,27,39],
+            '龙': [2,14,26,38],
+            '蛇': [1,13,25,37,49],
+            '马': [7,19,31,43],
+            '羊': [8,20,32,44],
+            '猴': [9,21,33,45],
+            '鸡': [10,22,34,46],
+            '狗': [11,23,35,47],
+            '猪': [12,24,36,48]
+        };
+
+        let currentMode = 'number';
+        let stats = {};
+
+        // 初始化页面
+        function initPage() {
+            initStats();
+            renderZodiacReference();
+            updateModeIndicator();
+        }
+
+        // 渲染生肖对照表
+        function renderZodiacReference() {
+            const container = document.getElementById('zodiacReference');
+            let html = '';
+            
+            for (const [zodiac, numbers] of Object.entries(zodiacMap)) {
+                html += `
+                    <div class="zodiac-item">
+                        <h3>${zodiac}</h3>
+                        <div class="zodiac-numbers">${numbers.join(', ')}</div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        // 初始化统计
+        function initStats() {
+            stats = currentMode === 'number' 
+                ? Object.fromEntries(Array.from({length:49}, (_,i) => [i+1, 0]))
+                : Object.fromEntries(Object.keys(zodiacMap).map(z => [z, 0]));
+        }
+
+        // 更新模式指示器
+        function updateModeIndicator() {
+            const indicator = document.getElementById('modeIndicator');
+            indicator.textContent = currentMode === 'number' ? '号码模式' : '生肖模式';
+            indicator.className = 'mode-indicator ' + (currentMode === 'number' ? 'number-mode' : 'zodiac-mode');
+        }
+
+        // 处理统计
+        function handleStatistics(type) {
+            currentMode = type;
+            initStats();
+            updateModeIndicator();
+            
+            const input = document.getElementById('input').value;
+            
+            // 处理输入内容
+            if(currentMode === 'number') {
+                // 处理数字输入
+                input.match(/\b([1-9]|[1-4][0-9])\b/g)?.forEach(n => {
+                    const num = parseInt(n);
+                    if(num >=1 && num <=49) stats[num]++;
+                });
+                
+                // 处理生肖对应的号码
+                input.match(new RegExp(`[${Object.keys(zodiacMap).join('')}]`, 'g'))?.forEach(z => {
+                    zodiacMap[z]?.forEach(n => stats[n]++);
+                });
+            } else {
+                // 处理生肖统计
+                input.match(new RegExp(`[${Object.keys(zodiacMap).join('')}]`, 'g'))?.forEach(z => {
+                    stats[z]++;
+                });
+            }
+
+            showResults();
+        }
+
+        // 显示结果
+        function showResults() {
+            const groups = Object.entries(stats).reduce((acc, [key, count]) => {
+                acc[count] = acc[count] || [];
+                acc[count].push(currentMode === 'number' ? key : key);
+                return acc;
+            }, {});
+
+            let html = `<table>
+                        <tr>
+                          <th class="count-cell">出现次数</th>
+                          <th class="numbers-cell">${currentMode === 'number' ? '对应号码' : '生肖名称'}</th>
+                          <th class="total-cell">总数</th>
+                        </tr>`;
+
+            // 按次数降序排列
+            Object.keys(groups)
+                .sort((a,b) => b - a)
+                .forEach(count => {
+                    const items = currentMode === 'number' 
+                        ? groups[count].sort((a,b) => a - b)
+                        : groups[count];
+                    
+                    html += `
+                        <tr>
+                          <td class="count-cell">${count}</td>
+                          <td class="numbers-cell">${items.join(', ')}</td>
+                          <td class="total-cell">${items.length}</td>
+                        </tr>`;
+                });
+
+            // 添加0次统计（仅号码模式）
+            if(currentMode === 'number' && !groups[0]) {
+                const zeroItems = Array.from({length:49}, (_,i) => i+1)
+                    .filter(n => stats[n] === 0);
+                if (zeroItems.length > 0) {
+                    html += `
+                        <tr>
+                          <td class="count-cell">0</td>
+                          <td class="numbers-cell">${zeroItems.join(', ')}</td>
+                          <td class="total-cell">${zeroItems.length}</td>
+                        </tr>`;
+                }
+            }
+
+            html += '</table>';
+            document.getElementById('result').innerHTML = html;
+        }
+
+        // 事件绑定
+        document.getElementById('zodiacBtn').onclick = () => handleStatistics('zodiac');
+        document.getElementById('numberBtn').onclick = () => handleStatistics('number');
+        document.getElementById('clearBtn').onclick = () => {
+            document.getElementById('input').value = '';
+            document.getElementById('result').innerHTML = '';
+            initStats();
+        };
+
+        // 初始化页面
+        window.onload = initPage;
+    </script>
+</body>
+</html>
